@@ -23,7 +23,7 @@ require('require/top.php');
             </div>
             <div class="bspace">
                 <?php
-                $query = "select orders.id,orders.o_id,order_status.o_status,order_time.added_on from orders,order_status,order_time where orders.order_status='5' and orders.u_cnfrm='0' and orders.order_status=order_status.id and order_time.o_status=orders.order_status and order_time.oid=orders.id order by orders.id desc";
+                $query = "select orders.id,orders.o_id,order_status.o_status,order_time.added_on from orders,order_status,order_time where orders.order_status='5' and orders.u_cnfrm='1' and orders.order_status=order_status.id and order_time.o_status=orders.order_status and order_time.oid=orders.id and orders.ptu='0' order by orders.id desc";
 
                 $res = mysqli_query($con, $query);
                 $i = 1;
@@ -40,7 +40,7 @@ require('require/top.php');
                         </div>
                         <div class="date"><?php echo $row['added_on']; ?></div>
                         <div class="p_action" style="width: 7rem">
-                            <button class="edit" onclick="redirect_to('showOrderDetail.php?id=<?php echo $row['id']; ?>')">
+                            <button class="edit" onclick="redirect_to('showOrderDetail__.php?id=<?php echo $row['id']; ?>')">
                                 <i class="fa fa-wifi" aria-hidden="true"></i>View
                             </button>
                         </div>

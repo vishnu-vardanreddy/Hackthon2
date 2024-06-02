@@ -1,589 +1,148 @@
-<?php require('require/top.php'); ?>
+<?php
+require('require/top.php');
 
-<div class="main-banner-slider">
-    <div class="container">
-        <div class="row">
-            <div class="owl-carousel owl-theme main-slider">
-                <div class="item">
-                    <img src="assets/images/sample/offer-1.jpg" alt="banner" />
-                    <div class="detail">
-                        <h5>20% off</h5>
-                        <h5>Get it now</h5>
-                        <h5>lorem ispum</h5>
-                    </div>
-                </div>
-                <div class="item">
-                    <img src="assets/images/sample/offer-1.jpg" alt="banner" />
-                    <div class="detail">
-                        <h5>20% off</h5>
-                        <h5>Get it now</h5>
-                        <h5>lorem ispum</h5>
-                    </div>
-                </div>
-                <div class="item">
-                    <img src="assets/images/sample/offer-1.jpg" alt="banner" />
-                    <div class="detail">
-                        <h5>20% off</h5>
-                        <h5>Get it now</h5>
-                        <h5>lorem ispum</h5>
-                    </div>
-                </div>
-                <div class="item">
-                    <img src="assets/images/sample/offer-1.jpg" alt="banner" />
-                    <div class="detail">
-                        <h5>20% off</h5>
-                        <h5>Get it now</h5>
-                        <h5>lorem ispum</h5>
-                    </div>
-                </div>
-                <div class="item">
-                    <img src="assets/images/sample/offer-1.jpg" alt="banner" />
-                    <div class="detail">
-                        <h5>20% off</h5>
-                        <h5>Get it now</h5>
-                        <h5>lorem ispum</h5>
-                    </div>
-                </div>
-                <div class="item">
-                    <img src="assets/images/sample/offer-1.jpg" alt="banner" />
-                    <div class="detail">
-                        <h5>20% off</h5>
-                        <h5>Get it now</h5>
-                        <h5>lorem ispum</h5>
-                    </div>
-                </div>
+?>
+<div class="wrwr">
+    <div class="path">
+        <a href=""><i class="fa fa-home" aria-hidden="true"></i> Dashboard</a>
+        <span>/</span>
+    </div>
+
+    <div class="row">
+        <div class="card" style="border:1px solid #e1e4e8;border-radius:0 5px 5px 0">
+            <div class="logo">
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </div>
+            <div class="rest">
+                <h4>Total Categories</h4>
+                <h3><?php echo get_total_categories($con); ?></h3>
             </div>
         </div>
+        <div class="card" style="border:1px solid #e1e4e8;border-radius:0 5px 5px 0">
+            <div class="logo">
+                <i class="fa fa-briefcase" aria-hidden="true"></i>
+            </div>
+            <div class="rest">
+                <h4>Total Products</h4>
+                <h3><?php echo get_total_product($con); ?></h3>
+            </div>
+        </div>
+        <div class="card" style="border:1px solid #e1e4e8;border-radius:0 5px 5px 0">
+            <div class="logo">
+                <i class="fa fa-users" aria-hidden="true"></i>
+            </div>
+            <div class="rest">
+                <h4>Total Sellers</h4>
+                <h3><?php echo get_total_seller($con); ?></h3>
+            </div>
+        </div>
+        <div class="card" style="border:1px solid #e1e4e8;border-radius:0 5px 5px 0">
+            <div class="logo">
+                <i class="fa fa-cart-arrow-down" aria-hidden="true"></i>
+            </div>
+            <div class="rest">
+                <h4>Total Orders</h4>
+                <h3><?php echo get_total_order($con); ?></h3>
+            </div>
+        </div>
+    </div>
+    <div class="rowbtn">
+        <div class="b" style="display:flex;flex-direction:column;padding:3rem 2rem" id="cpl">
+            <?php
+            $t = mysqli_fetch_assoc(mysqli_query($con, "select * from dc where id='1'"));
+            ?>
+            <h2>Current Minimum Order Amount Without Delivery Charge: <?php echo $t['dc']; ?></h2>
+            <input value="<?php echo $t['dc']; ?>" type="text" placeholder="Enter minimum amount for delivery charge" id="sfield" style="width:98.5%;margin:1rem 0;" />
+            <h2>Delivery Charge: <?php echo $t['pc']; ?></h2>
+            <input value="<?php echo $t['pc']; ?>" type="text" placeholder="Enter minimum amount for delivery charge" id="sfield2" style="width:98.5%;margin:1rem 0;" />
+            <button class="add" onclick="dv_charge()">
+                <i class="fa fa-plus" aria-hidden="true"></i> &nbsp;Update
+            </button>
+            <span style="font-size:1.2rem;margin-top:0.8rem;" id="erm"></span>
+        </div>
+    </div>
+    <div class="row2">
+        <div class="chart">
+            <div class="row">
+                <h4>All Sales</h4>
+            </div>
+            <div class="sd" id="chart_div"></div>
+        </div>
+        <div class="right">
+            <div class="row">
+                <h4>All Orders</h4>
+            </div>
+            <div class="sd" id="piechart"></div>
+        </div>
+    </div>
+    <div class="row" style="
+              display: block;
+              margin-bottom: 2rem;
+              font-size: 1.2rem;
+              color: #6a7187;
+            ">
+        @ Developed by Ayondip Jana
     </div>
 </div>
+<script type="text/javascript">
+    google.charts.load("current", {
+        packages: ["corechart"]
+    });
+    google.charts.setOnLoadCallback(drawChart);
+    google.charts.setOnLoadCallback(drawChartV);
+    let y = 20;
 
-<section class="defaultPadding mt4">
-    <div class="container mrlAuto">
-        <div class="heading">
-            <span>Shop By</span>
-            <h2>Categories</h2>
-        </div>
-        <div class="row mt3 ct-row">
-            <div class="owl-carousel owl-theme cate-slider">
-                <?php
-                $res = mysqli_query($con, "select * from categories");
-                while ($row = mysqli_fetch_assoc($res)) {
-                ?>
-                    <div class="item">
-                        <a class="category-Item" href="view.php?n=<?php echo $row['id'] ?>&k=">
-                            <div class="cate-img">
-                                <img src="assets/images/svg/icon-7.svg" alt="" />
-                            </div>
-                            <h4><?php
-                                echo $row['category'];
-                                ?></h4>
-                        </a>
-                    </div>
-                <?php } ?>
-            </div>
-        </div>
-    </div>
-</section>
-<?php
-if (isset($_GET['utm_source']) || isset($_SESSION['utm_source'])) {
-    $s = '';
-    if (isset($_SESSION['utm_source']) && !isset($_GET['utm_source'])) {
-        $s = $_SESSION['utm_source'];
-    } else {
-        $s = $_GET['utm_source'];
+    function drawChart() {
+        var data = google.visualization.arrayToDataTable([
+            ["Task", "Hours per Day"],
+            ["Total Orders", 20],
+            ["Pending", 20],
+            ["Confirm", 20],
+            ["Intransit", y],
+            ["Delivered", 20],
+        ]);
+
+        var options = {
+            title: "Orders Chart",
+            is3D: true,
+        };
+
+        var chart = new google.visualization.PieChart(
+            document.getElementById("piechart")
+        );
+
+        chart.draw(data, options);
     }
-    verify_source($con, $s);
-    $featured = get_featured_products($con);
-    //  prx($featured);
-?>
-    <section class="defaultPadding mt4">
-        <div class="container mrlAuto">
-            <div class="heading">
-                <span>For You</span>
-                <h2>Top Featured Products</h2>
-            </div>
-            <div class="row mt3 ct-row">
-                <div class="owl-carousel owl-theme product-slider">
-                    <?php
-                    if (count($featured) > 0) {
-                        foreach ($featured as $product) {
-                    ?>
-                            <div class="item">
-                                <div class="productBox">
-                                    <a href="javascript:void(0)" class="product-image">
-                                        <img src="media/product/<?php echo $product['img1']; ?>" alt="product" />
-                                        <div class="topOption">
-                                            <span class="offer"><?php
-                                                                $offn = ($product['fa'] * 100) / $product['price'];
-                                                                $off = round(100 - $offn);
-                                                                echo $off . '%';
-                                                                ?></span>
-                                            <?php
-                                            if (!isset($_SESSION['USER_LOGIN'])) {
-                                            ?>
-                                                <span class="wishlist" onclick="addwish(<?php echo $product['id']; ?>)">
-                                                    <i class="uil uil-heart"></i>
-                                                </span>
-                                                <?php
-                                            } else {
-                                                $pid = $product['id'];
-                                                $uid = $_SESSION['USER_ID'];
-                                                $n = mysqli_num_rows(mysqli_query($con, "select * from wishlist where u_id='$uid' and p_id='$pid'"));
-                                                if ($n > 0) {
-                                                ?>
-                                                    <span class="wishlist" onclick="gowish()">
-                                                        <i class="uil uil-heart"></i>
-                                                    </span>
-                                                <?php
-                                                } else {
-                                                ?>
-                                                    <span class="wishlist" onclick="addwish(<?php echo $product['id']; ?>)">
-                                                        <i class="uil uil-heart"></i>
-                                                    </span>
-                                            <?php
-                                                }
-                                            }
-                                            ?>
-                                        </div>
-                                    </a>
-                                    <div class="product-detail">
-                                        <p><?php
-                                            if ($product['qty'] > 0) {
-                                                echo "Available(In Stock)";
-                                            } else {
-                                                echo "Unavailable(Out of Stock)";
-                                            } ?></p>
-                                        <h4 style="cursor:pointer" onclick="control.redirect('product_detail.php?pid=<?php echo $product['id'] ?>')"><?php echo $product['product_name']; ?></h4>
-                                        <div class="price">&#8377;<?php echo $product['fa']; ?>
-                                            <span>&#8377;<?php echo $product['price']; ?></span>
-                                        </div>
-                                        <div class="cartqt">
-                                            <?php
 
-                                            if (!isset($_SESSION['USER_LOGIN'])) {
-                                                if (isset($_SESSION['USER_CART'])) {
-                                                    if (in_array($product['id'], $_SESSION['USER_CART'])) {
-                                                        $index = array_search($product['id'], $_SESSION['USER_CART']);
-                                            ?>
-                                                        <div class="quantity buttons_added">
-                                                            <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                            <input type="number" name="quantity" value="<?php echo $_SESSION['CART_QTY'][$index]; ?>" class="qty-text" />
-                                                            <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                        </div>
-                                                        <div class="ct-icon" onclick="go_to_cart()">
-                                                            <i class="uil uil-shopping-cart-alt"></i>
-                                                        </div>
-                                                    <?php
-                                                    } else {
-                                                    ?>
-                                                        <div class="quantity buttons_added">
-                                                            <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                            <input type="number" name="quantity" value="1" class="qty-text" />
-                                                            <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                        </div>
-                                                        <div class="ct-icon" onclick="add_cart(<?php echo $product['id']; ?>,this)">
-                                                            <i class="uil uil-shopping-cart-alt"></i>
-                                                        </div>
-                                                    <?php
-                                                    }
-                                                } else {
-                                                    ?>
-                                                    <div class="quantity buttons_added">
-                                                        <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                        <input type="number" name="quantity" value="1" class="qty-text" />
-                                                        <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                    </div>
-                                                    <div class="ct-icon" onclick="add_cart(<?php echo $product['id']; ?>,this)">
-                                                        <i class="uil uil-shopping-cart-alt"></i>
-                                                    </div>
-                                                <?php
-                                                }
-                                            } else {
-                                                $p_idd = $product['id'];
-                                                $u_id = $_SESSION['USER_ID'];
-                                                $query = "select cart.u_id,cart_detail.qty from cart,cart_detail where cart.u_id='$u_id' and cart_detail.p_id='$p_idd' and cart_detail.cart_id=cart.id";
-                                                $rs = mysqli_query($con, $query);
-                                                $i = mysqli_num_rows($rs);
-                                                if ($i > 0) {
-                                                    $g = mysqli_fetch_assoc($rs);
-                                                ?>
+    function drawChartV() {
+        var data = google.visualization.arrayToDataTable([
+            ["Year", "Sales", ""],
+            ["12", 1000, 0],
+            ["2014", 1170, 0],
+            ["2015", 660, 0],
+            ["2016", 1030, 0],
+        ]);
 
-                                                    <div class="quantity buttons_added">
-                                                        <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                        <input type="number" name="quantity" value="<?php echo $g['qty'] ?>" class="qty-text" />
-                                                        <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                    </div>
-                                                    <div class="ct-icon" onclick="go_to_cart()">
-                                                        <i class="uil uil-shopping-cart-alt"></i>
-                                                    </div>
+        var options = {
+            title: "All Sales",
+            hAxis: {
+                title: "Day",
+                titleTextStyle: {
+                    color: "#333"
+                }
+            },
+            vAxis: {
+                title: "Product",
+                minValue: 0
+            },
+        };
 
-                                                <?php
-                                                } else {
-                                                ?>
-                                                    <div class="quantity buttons_added">
-                                                        <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                        <input type="number" name="quantity" value="1" class="qty-text" />
-                                                        <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                    </div>
-                                                    <div class="ct-icon" onclick="add_cart(<?php echo $product['id']; ?>,this)">
-                                                        <i class="uil uil-shopping-cart-alt"></i>
-                                                    </div>
-                                            <?php
-                                                }
-                                            }
-                                            ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    <?php }
-                    } ?>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="defaultPadding mt4">
-        <div class="container mrlAuto">
-            <div class="heading">
-                <span>Offers</span>
-                <h2>Best Values</h2>
-            </div>
-            <div class="row mt3 ct-row banner-row">
-                <div class="row1">
-                    <div class="ban">
-                        <a href="#">
-                            <img src="assets/images/banner/offer-1.jpg" alt="banner1" />
-                        </a>
-                    </div>
-                    <div class="ban">
-                        <a href="#">
-                            <img src="assets/images/banner/offer-2.jpg" alt="banner1" />
-                        </a>
-                    </div>
-                    <div class="ban">
-                        <a href="#">
-                            <img src="assets/images/banner/offer-3.jpg" alt="banner1" />
-                        </a>
-                    </div>
-                </div>
-                <div class="row1">
-                    <a href="#" class="long-banner">
-                        <img src="assets/images/banner/offer-4.jpg" alt="banner1" />
-                    </a>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="defaultPadding mt4">
-        <div class="container mrlAuto">
-            <div class="heading">
-                <span>For You</span>
-                <h2> Fresh Products</h2>
-            </div>
-            <div class="row mt3 ct-row">
-                <div class="owl-carousel owl-theme product-slider">
-                    <?php
-                    if (count($featured) > 0) {
-                        foreach ($featured as $product) {
-                    ?>
-                            <div class="item">
-                                <div class="productBox">
-                                    <a href="javascript:void(0)" class="product-image">
-                                        <img src="media/product/<?php echo $product['img1']; ?>" alt="product" />
-                                        <div class="topOption">
-                                            <span class="offer"><?php
-                                                                $offn = ($product['fa'] * 100) / $product['price'];
-                                                                $off = round(100 - $offn);
-                                                                echo $off . '%';
-                                                                ?></span>
-                                            <?php
-                                            if (!isset($_SESSION['USER_LOGIN'])) {
-                                            ?>
-                                                <span class="wishlist" onclick="addwish(<?php echo $product['id']; ?>)">
-                                                    <i class="uil uil-heart"></i>
-                                                </span>
-                                                <?php
-                                            } else {
-                                                $pid = $product['id'];
-                                                $uid = $_SESSION['USER_ID'];
-                                                $n = mysqli_num_rows(mysqli_query($con, "select * from wishlist where u_id='$uid' and p_id='$pid'"));
-                                                if ($n > 0) {
-                                                ?>
-                                                    <span class="wishlist" onclick="gowish()">
-                                                        <i class="uil uil-heart"></i>
-                                                    </span>
-                                                <?php
-                                                } else {
-                                                ?>
-                                                    <span class="wishlist" onclick="addwish(<?php echo $product['id']; ?>)">
-                                                        <i class="uil uil-heart"></i>
-                                                    </span>
-                                            <?php
-                                                }
-                                            }
-                                            ?>
-                                        </div>
-                                    </a>
-                                    <div class="product-detail">
-                                        <p><?php
-                                            if ($product['qty'] > 0) {
-                                                echo "Available(In Stock)";
-                                            } else {
-                                                echo "Unavailable(Out of Stock)";
-                                            } ?></p>
-                                        <h4 style="cursor:pointer" onclick="control.redirect('product_detail.php?pid=<?php echo $product['id'] ?>')"><?php echo $product['product_name']; ?></h4>
-                                        <div class="price">&#8377;<?php echo $product['fa']; ?>
-                                            <span>&#8377;<?php echo $product['price']; ?></span>
-                                        </div>
-                                        <div class="cartqt">
-                                            <?php
-
-                                            if (!isset($_SESSION['USER_LOGIN'])) {
-                                                if (isset($_SESSION['USER_CART'])) {
-                                                    if (in_array($product['id'], $_SESSION['USER_CART'])) {
-                                                        $index = array_search($product['id'], $_SESSION['USER_CART']);
-                                            ?>
-                                                        <div class="quantity buttons_added">
-                                                            <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                            <input type="number" name="quantity" value="<?php echo $_SESSION['CART_QTY'][$index]; ?>" class="qty-text" />
-                                                            <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                        </div>
-                                                        <div class="ct-icon" onclick="go_to_cart()">
-                                                            <i class="uil uil-shopping-cart-alt"></i>
-                                                        </div>
-                                                    <?php
-                                                    } else {
-                                                    ?>
-                                                        <div class="quantity buttons_added">
-                                                            <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                            <input type="number" name="quantity" value="1" class="qty-text" />
-                                                            <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                        </div>
-                                                        <div class="ct-icon" onclick="add_cart(<?php echo $product['id']; ?>,this)">
-                                                            <i class="uil uil-shopping-cart-alt"></i>
-                                                        </div>
-                                                    <?php
-                                                    }
-                                                } else {
-                                                    ?>
-                                                    <div class="quantity buttons_added">
-                                                        <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                        <input type="number" name="quantity" value="1" class="qty-text" />
-                                                        <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                    </div>
-                                                    <div class="ct-icon" onclick="add_cart(<?php echo $product['id']; ?>,this)">
-                                                        <i class="uil uil-shopping-cart-alt"></i>
-                                                    </div>
-                                                <?php
-                                                }
-                                            } else {
-                                                $p_idd = $product['id'];
-                                                $u_id = $_SESSION['USER_ID'];
-                                                $query = "select cart.u_id,cart_detail.qty from cart,cart_detail where cart.u_id='$u_id' and cart_detail.p_id='$p_idd' and cart_detail.cart_id=cart.id";
-                                                $rs = mysqli_query($con, $query);
-                                                $i = mysqli_num_rows($rs);
-                                                if ($i > 0) {
-                                                    $g = mysqli_fetch_assoc($rs);
-                                                ?>
-
-                                                    <div class="quantity buttons_added">
-                                                        <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                        <input type="number" name="quantity" value="<?php echo $g['qty'] ?>" class="qty-text" />
-                                                        <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                    </div>
-                                                    <div class="ct-icon" onclick="go_to_cart()">
-                                                        <i class="uil uil-shopping-cart-alt"></i>
-                                                    </div>
-
-                                                <?php
-                                                } else {
-                                                ?>
-                                                    <div class="quantity buttons_added">
-                                                        <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                        <input type="number" name="quantity" value="1" class="qty-text" />
-                                                        <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                    </div>
-                                                    <div class="ct-icon" onclick="add_cart(<?php echo $product['id']; ?>,this)">
-                                                        <i class="uil uil-shopping-cart-alt"></i>
-                                                    </div>
-                                            <?php
-                                                }
-                                            }
-                                            ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    <?php }
-                    } ?>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="defaultPadding mt4">
-        <div class="container mrlAuto">
-            <div class="heading">
-                <span>For You</span>
-                <h2>New Products</h2>
-            </div>
-            <div class="row mt3 ct-row">
-                <div class="owl-carousel owl-theme product-slider">
-                    <?php
-                    if (count($featured) > 0) {
-                        foreach ($featured as $product) {
-                    ?>
-                            <div class="item">
-                                <div class="productBox">
-                                    <a href="javascript:void(0)" class="product-image">
-                                        <img src="media/product/<?php echo $product['img1']; ?>" alt="product" />
-                                        <div class="topOption">
-                                            <span class="offer"><?php
-                                                                $offn = ($product['fa'] * 100) / $product['price'];
-                                                                $off = round(100 - $offn);
-                                                                echo $off . '%';
-                                                                ?></span>
-                                            <?php
-                                            if (!isset($_SESSION['USER_LOGIN'])) {
-                                            ?>
-                                                <span class="wishlist" onclick="addwish(<?php echo $product['id']; ?>)">
-                                                    <i class="uil uil-heart"></i>
-                                                </span>
-                                                <?php
-                                            } else {
-                                                $pid = $product['id'];
-                                                $uid = $_SESSION['USER_ID'];
-                                                $n = mysqli_num_rows(mysqli_query($con, "select * from wishlist where u_id='$uid' and p_id='$pid'"));
-                                                if ($n > 0) {
-                                                ?>
-                                                    <span class="wishlist" onclick="gowish()">
-                                                        <i class="uil uil-heart"></i>
-                                                    </span>
-                                                <?php
-                                                } else {
-                                                ?>
-                                                    <span class="wishlist" onclick="addwish(<?php echo $product['id']; ?>)">
-                                                        <i class="uil uil-heart"></i>
-                                                    </span>
-                                            <?php
-                                                }
-                                            }
-                                            ?>
-                                        </div>
-                                    </a>
-                                    <div class="product-detail">
-                                        <p><?php
-                                            if ($product['qty'] > 0) {
-                                                echo "Available(In Stock)";
-                                            } else {
-                                                echo "Unavailable(Out of Stock)";
-                                            } ?></p>
-                                        <h4 style="cursor:pointer" onclick="control.redirect('product_detail.php?pid=<?php echo $product['id'] ?>')"><?php echo $product['product_name']; ?></h4>
-                                        <div class="price">&#8377;<?php echo $product['fa']; ?>
-                                            <span>&#8377;<?php echo $product['price']; ?></span>
-                                        </div>
-                                        <div class="cartqt">
-                                            <?php
-
-                                            if (!isset($_SESSION['USER_LOGIN'])) {
-                                                if (isset($_SESSION['USER_CART'])) {
-                                                    if (in_array($product['id'], $_SESSION['USER_CART'])) {
-                                                        $index = array_search($product['id'], $_SESSION['USER_CART']);
-                                            ?>
-                                                        <div class="quantity buttons_added">
-                                                            <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                            <input type="number" name="quantity" value="<?php echo $_SESSION['CART_QTY'][$index]; ?>" class="qty-text" />
-                                                            <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                        </div>
-                                                        <div class="ct-icon" onclick="go_to_cart()">
-                                                            <i class="uil uil-shopping-cart-alt"></i>
-                                                        </div>
-                                                    <?php
-                                                    } else {
-                                                    ?>
-                                                        <div class="quantity buttons_added">
-                                                            <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                            <input type="number" name="quantity" value="1" class="qty-text" />
-                                                            <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                        </div>
-                                                        <div class="ct-icon" onclick="add_cart(<?php echo $product['id']; ?>,this)">
-                                                            <i class="uil uil-shopping-cart-alt"></i>
-                                                        </div>
-                                                    <?php
-                                                    }
-                                                } else {
-                                                    ?>
-                                                    <div class="quantity buttons_added">
-                                                        <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                        <input type="number" name="quantity" value="1" class="qty-text" />
-                                                        <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                    </div>
-                                                    <div class="ct-icon" onclick="add_cart(<?php echo $product['id']; ?>,this)">
-                                                        <i class="uil uil-shopping-cart-alt"></i>
-                                                    </div>
-                                                <?php
-                                                }
-                                            } else {
-                                                $p_idd = $product['id'];
-                                                $u_id = $_SESSION['USER_ID'];
-                                                $query = "select cart.u_id,cart_detail.qty from cart,cart_detail where cart.u_id='$u_id' and cart_detail.p_id='$p_idd' and cart_detail.cart_id=cart.id";
-                                                $rs = mysqli_query($con, $query);
-                                                $i = mysqli_num_rows($rs);
-                                                if ($i > 0) {
-                                                    $g = mysqli_fetch_assoc($rs);
-                                                ?>
-
-                                                    <div class="quantity buttons_added">
-                                                        <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                        <input type="number" name="quantity" value="<?php echo $g['qty'] ?>" class="qty-text" />
-                                                        <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                    </div>
-                                                    <div class="ct-icon" onclick="go_to_cart()">
-                                                        <i class="uil uil-shopping-cart-alt"></i>
-                                                    </div>
-
-                                                <?php
-                                                } else {
-                                                ?>
-                                                    <div class="quantity buttons_added">
-                                                        <input type="button" value="-" class="minus minus-btn" onclick="decrement(this)" />
-                                                        <input type="number" name="quantity" value="1" class="qty-text" />
-                                                        <input type="button" value="+" class="plus plus-btn" onclick="increment(this)" />
-                                                    </div>
-                                                    <div class="ct-icon" onclick="add_cart(<?php echo $product['id']; ?>,this)">
-                                                        <i class="uil uil-shopping-cart-alt"></i>
-                                                    </div>
-                                            <?php
-                                                }
-                                            }
-                                            ?>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                    <?php }
-                    } ?>
-                </div>
-            </div>
-        </div>
-    </section>
+        var chart = new google.visualization.AreaChart(
+            document.getElementById("chart_div")
+        );
+        chart.draw(data, options);
+    }
+</script>
 <?php
-} else {
-
+require('require/foot.php');
 ?>
-
-    <section class="defaultPadding mt4">
-        <div class="container mrlAuto">
-            <div class="heading">
-                <h2>Please select a location to browse products</h2>
-            </div>
-        </div>
-    </section>
-<?php
-
-}
-?>
-
-
-<?php require('require/foot.php'); ?>
-<?php require('require/csOwl.php'); ?>
-<?php require('require/last.php'); ?>

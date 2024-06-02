@@ -23,7 +23,7 @@ require('require/top.php');
             </div>
             <div class="bspace">
                 <?php
-                $query = "select orders.id,orders.o_id,order_status.o_status,order_time.added_on from orders,order_status,order_time where orders.order_status='5' and orders.u_cnfrm='0' and orders.order_status=order_status.id and order_time.o_status=orders.order_status and order_time.oid=orders.id order by orders.id desc";
+                $query = "select orders.id,orders.o_id,order_status.o_status,order_time.added_on from orders,order_status,order_time where orders.order_status='3' and orders.order_status=order_status.id and order_time.o_status=orders.order_status and order_time.oid=orders.id order by orders.id desc";
 
                 $res = mysqli_query($con, $query);
                 $i = 1;
